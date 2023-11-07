@@ -21,6 +21,9 @@ connection.once("open", () => {
   console.log("Database Connection Successful");
 })
 
+const RecipeRoute = require('./routes/RecipeRoute');
+app.use('/recipes', RecipeRoute);
+
 // Starting server
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`)
