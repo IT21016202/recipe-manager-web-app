@@ -13,12 +13,13 @@ const NavBar = () => {
             </button>
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <div class="ml-auto">
+                <button className='btn btn-info' onClick={() => window.location.reload(false)}>Refresh Page</button>
+              </div>
             </div>
         </nav>
         <hr/>
-    </div>
-        
-        
+    </div>       
   )
 }
 

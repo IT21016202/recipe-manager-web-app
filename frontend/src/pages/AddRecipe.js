@@ -2,6 +2,7 @@ import React, {useState}from 'react'
 import Image from '../images/addRecipImg.jpg';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Swal from "sweetalert2";
 
 const AddRecipe = () => {
     const navigate = useNavigate();
@@ -14,6 +15,16 @@ const AddRecipe = () => {
     // Add New Recipe to DB
     function handleSubmit(e){
         e.preventDefault();
+
+        // Check if the user entered all the data
+        if(name === '' || description === '' || ingredients === ''){
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please Enter All Data !',
+              })
+              return;
+        } 
         const newRecipe = {
             name,
             description,
@@ -21,7 +32,13 @@ const AddRecipe = () => {
         }
         axios.post('http://localhost:8000/recipes/add', newRecipe)
         .then((res)=>{
-            alert('Recipe Added Successfully !');
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'New Recipe Added !',
+                showConfirmButton: false,
+                timer: 1500
+              })
             navigate('/')
         })
         .catch((err)=>{
@@ -44,9 +61,9 @@ const AddRecipe = () => {
             <div className='col-md-6'>
                 <form > 
                     <h3 style={formTopic}>Enter Recipe Data Below</h3>
-                    <input type='text' className='form-control' placeholder='Recipe Name' onChange={(e) => setName(e.target.value)} style={inputS}/>
-                    <textarea type='text' className='form-control' placeholder='Recipe Description' rows="3" onChange={(e) => setDescription(e.target.value)} style={inputS}/>
-                    <textarea type='text' className='form-control' placeholder='Recipe Ingredients' rows="3" onChange={(e) => setIngredients(e.target.value)} style={inputS}/>
+                    <input type='text' className='form-control' placeholder='Recipe Name' required onChange={(e) => setName(e.target.value)} style={inputS}/>
+                    <textarea type='text' className='form-control' placeholder='Recipe Description' required rows="3" onChange={(e) => setDescription(e.target.value)} style={inputS}/>
+                    <textarea type='text' className='form-control' placeholder='Recipe Ingredients' required rows="3" onChange={(e) => setIngredients(e.target.value)} style={inputS}/>
                     <button className='btn btn-success' onClick={(e) => handleSubmit(e)} style={btn}>Add Recipe</button>
                 </form> 
             </div>

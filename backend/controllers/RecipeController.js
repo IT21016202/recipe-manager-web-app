@@ -68,8 +68,26 @@ const getRecipeById = async (req, res) => {
 
 // Update a recipe by id
 const updateRecipeById = async (req, res) => {
+
+    // Check for validation
+    check('name').notEmpty().withMessage('Recipe name is required');
+    check('ingredients').notEmpty().withMessage('Recipe ingredients are required');
+    check('description').notEmpty().withMessage('Recipe description is required');
+
+    // Return validation errors
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+        next();
+    }
+
+    // Updating recipe
     try {
-        const updatedRecipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const { name, description, ingredients } = req.body;
+        const updatedData = { name, description, ingredients, updatedAt: Date.now() };
+        const updatedRecipe = await Recipe.findByIdAndUpdate(req.params.id, updatedData);
 
         if (!updatedRecipe) 
             return res.status(404).json({ success: false, message: 'Recipe not found' });
@@ -98,5 +116,5 @@ const deleteRecipeById = async (req, res) => {
     }
 }
 
-
+// Exporting APIs
 module.exports = {addRecipe, getAllRecipes, getRecipeById, updateRecipeById, deleteRecipeById};

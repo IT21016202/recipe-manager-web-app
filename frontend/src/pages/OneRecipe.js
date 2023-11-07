@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Image from '../images/recipe.jpg';
 import axios from 'axios';
 
@@ -12,7 +12,6 @@ const OneRecipe = () => {
         axios.get(`http://localhost:8000/recipes/${id}`)
         .then(res => {
             setRecipes(res.data.data);
-            console.log(res.data.data)
         })
         .catch(err => console.log(err));
     }, []);
@@ -37,7 +36,7 @@ const OneRecipe = () => {
                     <h3 style={subTopic}>Ingredients</h3>
                     <p style={details}>{recipes.ingredients}</p>
                 </div>
-                
+                <Link to='/'><button className='btn' style={btn}>Back To Home</button></Link> 
             </div>
         </div>
     </div>
@@ -66,6 +65,16 @@ const subTopic = {
 const details = {
     fontSize: '18px',
     textAlign: 'justify',
+}
+
+const btn = {
+    marginTop: '30px',
+    borderRadius: '10px',
+    padding: '8px',
+    paddingLeft: '22px',
+    paddingRight: '22px',
+    fontSize: '16px',
+    border: 'none',
 }
 
 export default OneRecipe

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Image from '../images/editRecipe.jpg';
 import axios from 'axios';
+import Swal from "sweetalert2";
 
 const EditRecipe = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
 
     // States variables to store data
     const [name, setName] = useState('');
@@ -25,6 +27,17 @@ const EditRecipe = () => {
     // Update Recipe
     function handleSubmit(e){
         e.preventDefault();
+
+        // Check if the user entered all the data
+        if(name === '' || description === '' || ingredients === ''){
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please Enter All Data !',
+                })
+            return;
+        }
+        
         const updatedRecipe = {
             name,
             description,
@@ -32,8 +45,14 @@ const EditRecipe = () => {
         }
         axios.patch(`http://localhost:8000/recipes/update/${id}`, updatedRecipe)
         .then((res)=>{
-            alert('Recipe Updated Successfully !');
-            window.location = `/recipe/${id}`;
+            navigate(`/recipe/${id}`)
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'Recipe Updated !',
+                showConfirmButton: false,
+                timer: 1500
+            })
         })
         .catch((err)=>{
             console.log(err);
@@ -55,9 +74,15 @@ const EditRecipe = () => {
             <div className='col-md-6'>
                 <form > 
                     <h3 style={formTopic}>Edit Recipe Data Below</h3>
-                    <input type='text' className='form-control' placeholder='Recipe Name' value={name} onChange={(e) => setName(e.target.value)} style={inputS}/>
-                    <textarea type='text' className='form-control' placeholder='Recipe Description' value={description} rows="3" onChange={(e) => setDescription(e.target.value)} style={inputS}/>
-                    <textarea type='text' className='form-control' placeholder='Recipe Ingredients' value={ingredients} rows="3" onChange={(e) => setIngredients(e.target.value)} style={inputS}/>
+
+                    <p style={inputTxt}>Recipe Name</p>
+                    <input type='text' className='form-control' placeholder='Recipe Name' required value={name} onChange={(e) => setName(e.target.value)} style={inputS}/>
+
+                    <p style={inputTxt}>Recipe Description</p>
+                    <textarea type='text' className='form-control' placeholder='Recipe Description' required value={description} rows="3" onChange={(e) => setDescription(e.target.value)} style={inputS}/>
+
+                    <p style={inputTxt}>Recipe Ingredients</p>
+                    <textarea type='text' className='form-control' placeholder='Recipe Ingredients' required value={ingredients} rows="3" onChange={(e) => setIngredients(e.target.value)} style={inputS}/>
                     <button className='btn btn-success' onClick={(e) => handleSubmit(e)} style={btn}>Edit Recipe</button>
                 </form> 
             </div>
@@ -86,6 +111,12 @@ const formTopic = {
     marginTop: '50px',
     textAlign: 'center',  
     marginRight: '50px',      
+}
+
+const inputTxt = {
+    marginLeft: '20px',
+    marginBottom: '5px',
+    fontWeight: 'bold',
 }
 
 const inputS = {
