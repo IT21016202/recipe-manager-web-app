@@ -21,6 +21,7 @@ connection.once("open", () => {
   console.log("Database Connection Successful");
 })
 
+// Importing routes
 const RecipeRoute = require('./routes/RecipeRoute');
 app.use('/recipes', RecipeRoute);
 

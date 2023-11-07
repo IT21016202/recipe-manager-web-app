@@ -9,6 +9,7 @@ const addRecipe = async (req, res) => {
     check('ingredients').notEmpty().withMessage('Recipe ingredients are required');
     check('description').notEmpty().withMessage('Recipe description is required');
 
+    // Return validation errors
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -17,6 +18,7 @@ const addRecipe = async (req, res) => {
         next();
     }
 
+    // Adding new recipe
     try { 
         const recipe = new Recipe(req.body);
         const result = await recipe.save();
@@ -95,9 +97,6 @@ const deleteRecipeById = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to delete recipe', error: err.message });
     }
 }
-
-
-
 
 
 module.exports = {addRecipe, getAllRecipes, getRecipeById, updateRecipeById, deleteRecipeById};
