@@ -1,7 +1,22 @@
 const Recipe = require('../models/RecipeModel');
+const { check, validationResult } = require('express-validator');
 
 // Add a new recipe
 const addRecipe = async (req, res) => {
+
+    // Check for validation
+    check('name').notEmpty().withMessage('Recipe name is required');
+    check('ingredients').notEmpty().withMessage('Recipe ingredients are required');
+    check('description').notEmpty().withMessage('Recipe description is required');
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+        next();
+    }
+
     try { 
         const recipe = new Recipe(req.body);
         const result = await recipe.save();
@@ -54,9 +69,8 @@ const updateRecipeById = async (req, res) => {
     try {
         const updatedRecipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-        if (!updatedRecipe) {
+        if (!updatedRecipe) 
             return res.status(404).json({ success: false, message: 'Recipe not found' });
-        }
 
         res.status(200).json({ success: true, message: 'Recipe Updated Successfully', data: updatedRecipe });
     } catch (err) {
@@ -72,9 +86,8 @@ const deleteRecipeById = async (req, res) => {
     try {
         const deletedRecipe = await Recipe.findByIdAndDelete(req.params.id);
 
-        if (!deletedRecipe) {
+        if (!deletedRecipe) 
             return res.status(404).json({ success: false, message: 'Recipe not found' });
-        }
 
         res.status(200).json({ success: true, message: 'Recipe Deleted Successfully' });
     } catch (err) {
